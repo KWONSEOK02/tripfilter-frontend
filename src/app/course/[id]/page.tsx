@@ -56,7 +56,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
           const m = mapLinks(p);
           return (
             <div key={p.contentId} className="place">
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div className="rowbetween">
                 <strong>{p.title}</strong>
                 <span className={`badge ${p.safetyBadge}`}>{BADGE_LABEL[p.safetyBadge]}</span>
               </div>

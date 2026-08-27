@@ -117,8 +117,8 @@ export default function ResultPage() {
         <p className="sub">근거 카드를 확인하고, 마음에 드는 코스의 지도앱으로 이동하세요.</p>
       </div>
       {s.courses.map((c, i) => (
-        <Link key={c.id} href={`/course/${encodeURIComponent(c.id)}`} className="card plain" style={{ display: "block" }}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <Link key={c.id} href={`/course/${encodeURIComponent(c.id)}`} className="card plain">
+          <div className="rowbetween">
             <strong>
               #{i + 1} {c.title}
             </strong>
