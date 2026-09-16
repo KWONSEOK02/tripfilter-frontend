@@ -87,7 +87,7 @@ export default function HomePage() {
   return (
     <main>
       <h1>부산 트립필터</h1>
-      <p className="sub">지도앱 열기 전에, 예산·시간·안전으로 코스를 먼저 걸러보세요.</p>
+      <p className="sub">지도앱 열기 전에, 예산·시간·관심사로 코스를 먼저 걸러보세요.</p>
 
       <div className="card">
         <label>출발 권역</label>
