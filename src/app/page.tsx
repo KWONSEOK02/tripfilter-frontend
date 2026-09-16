@@ -38,9 +38,10 @@ export default function HomePage() {
   // 직전 조건을 복원함 (D-3, WCAG 2.2 3.3.7 중복 입력 Level A).
   // useState 초기값으로 읽지 않는 이유는 서버 렌더에 sessionStorage가 없어 하이드레이션이 어긋나기 때문임.
   useEffect(() => {
-    const raw = sessionStorage.getItem("tf-input");
-    if (!raw) return;
     try {
+      // 저장소 읽기 자체가 막힌 환경도 기본값으로 진행함
+      const raw = sessionStorage.getItem("tf-input");
+      if (!raw) return;
       const saved = JSON.parse(raw) as Partial<FilterInput>;
       setV((cur) => ({
         ...cur,

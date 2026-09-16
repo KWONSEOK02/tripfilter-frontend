@@ -12,16 +12,17 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
   const [hasInput, setHasInput] = useState(false);
 
   useEffect(() => {
-    setHasInput(!!sessionStorage.getItem("tf-input"));
-    const raw = sessionStorage.getItem("tf-courses");
-    if (!raw) {
+    // 저장소 읽기 실패, 손상된 JSON, 잘못된 id 인코딩은 모두 복구 화면으로 보냄
+    try {
+      setHasInput(!!sessionStorage.getItem("tf-input"));
+      const courses = JSON.parse(sessionStorage.getItem("tf-courses") ?? "[]") as Course[];
+      const target = decodeURIComponent(id);
+      const found = Array.isArray(courses) ? courses.find((c) => c.id === target) : undefined;
+      if (found) setCourse(found);
+      else setMissing(true);
+    } catch {
       setMissing(true);
-      return;
     }
-    const courses = JSON.parse(raw) as Course[];
-    const found = courses.find((c) => c.id === decodeURIComponent(id));
-    if (found) setCourse(found);
-    else setMissing(true);
   }, [id]);
 
   // 상태 전환을 보조기기에 알림 (D-11, WCAG 2.2 4.1.3 상태 메시지 AA)

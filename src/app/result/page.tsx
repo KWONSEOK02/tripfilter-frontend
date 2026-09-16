@@ -24,14 +24,18 @@ export default function ResultPage() {
 
   const load = useCallback(() => {
     if (inFlight.current) return;
-    const raw = sessionStorage.getItem("tf-input");
-    if (!raw) {
+    // 저장소 읽기 실패와 손상된 JSON 은 조건이 없는 경우와 같게 다룸. 예외가 화면을 멈추지 않게 함
+    let input: FilterInput;
+    try {
+      const raw = sessionStorage.getItem("tf-input");
+      if (!raw) throw new Error("no input");
+      input = JSON.parse(raw) as FilterInput;
+    } catch {
       router.replace("/");
       return;
     }
     inFlight.current = true;
     setS({ status: "loading", courses: [] });
-    const input = JSON.parse(raw) as FilterInput;
     // 추천 API는 tripfilter-backend 소유임. 주소는 NEXT_PUBLIC_API_BASE_URL로 주입함.
     fetch(`${API}/api/v1/recommend`, {
       // 응답이 오지 않으면 로딩이 끝나지 않으므로 15초에서 끊고 통신 오류로 보냄
