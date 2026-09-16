@@ -17,8 +17,9 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
       setHasInput(!!sessionStorage.getItem("tf-input"));
       const courses = JSON.parse(sessionStorage.getItem("tf-courses") ?? "[]") as Course[];
       const target = decodeURIComponent(id);
-      const found = Array.isArray(courses) ? courses.find((c) => c.id === target) : undefined;
-      if (found) setCourse(found);
+      const found = Array.isArray(courses) ? courses.find((c) => c?.id === target) : undefined;
+      // 렌더가 쓰는 필드의 구조까지 확인함. 구조가 어긋난 저장값이 렌더 중 예외를 내지 않게 함
+      if (found && Array.isArray(found.places) && found.reason) setCourse(found);
       else setMissing(true);
     } catch {
       setMissing(true);
