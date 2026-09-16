@@ -79,8 +79,14 @@ export default function HomePage() {
     const problem = validate(v);
     setError(problem);
     if (problem) return;
+    try {
+      sessionStorage.setItem("tf-input", JSON.stringify(v));
+    } catch {
+      // 저장소를 쓸 수 없으면 결과 화면이 조건을 읽지 못하므로 이동하지 않고 알림. busy 를 켜기 전에 처리해 버튼 고착을 막음
+      setError("이 브라우저에서는 조건을 저장할 수 없어요. 사생활 보호 모드를 끄고 다시 시도해주세요.");
+      return;
+    }
     setBusy(true);
-    sessionStorage.setItem("tf-input", JSON.stringify(v));
     router.push("/result");
   }
 
@@ -90,8 +96,8 @@ export default function HomePage() {
       <p className="sub">지도앱 열기 전에, 예산·시간·관심사로 코스를 먼저 걸러보세요.</p>
 
       <div className="card">
-        <label>출발 권역</label>
-        <select value={v.area} onChange={(e) => setV({ ...v, area: e.target.value })}>
+        <label htmlFor="f-area">출발 권역</label>
+        <select id="f-area" value={v.area} onChange={(e) => setV({ ...v, area: e.target.value })}>
           {areas.map((a) => (
             <option key={a.key} value={a.key}>{a.label}</option>
           ))}
@@ -101,38 +107,39 @@ export default function HomePage() {
 
         <div className="row">
           <div>
-            <label>가용 시간 (시간)</label>
-            <input type="number" min={2} max={10} value={v.timeHours}
+            <label htmlFor="f-time">가용 시간 (시간)</label>
+            <input id="f-time" type="number" min={2} max={10} value={v.timeHours}
               onChange={(e) => setV({ ...v, timeHours: Number(e.target.value) })} />
           </div>
           <div>
-            <label>1인 예산 (원)</label>
-            <input type="number" min={0} step={5000} value={v.budget}
+            <label htmlFor="f-budget">1인 예산 (원)</label>
+            <input id="f-budget" type="number" min={0} step={5000} value={v.budget}
               onChange={(e) => setV({ ...v, budget: Number(e.target.value) })} />
           </div>
         </div>
 
-        <label>인원</label>
-        <input type="number" min={1} max={10} value={v.partySize}
+        <label htmlFor="f-party">인원</label>
+        <input id="f-party" type="number" min={1} max={10} value={v.partySize}
           onChange={(e) => setV({ ...v, partySize: Number(e.target.value) })} />
         {/* 1인 비용과 예산 양쪽에 인원이 곱해져 순위에서 약분됨. 가중치를 넣지 않고 표시 전용임을 밝힘 (UI-A4) */}
         <p className="muted">전체 금액 표시에만 쓰이고, 코스 순위에는 영향을 주지 않아요.</p>
 
-        <label>관심사 (탭하여 선택)</label>
-        <div className="chips">
+        <label id="f-interests">관심사 (탭하여 선택)</label>
+        {/* 칩 묶음은 label 이 가리킬 단일 컨트롤이 없어 group 과 aria-labelledby 로 이름을 붙임 (B-2) */}
+        <div className="chips" role="group" aria-labelledby="f-interests">
           {INTERESTS.map((i) => (
             <button key={i.id} type="button" className="chip"
-              data-on={v.interests.includes(i.id)} onClick={() => toggle("interests", i.id)}>
+              data-on={v.interests.includes(i.id)} aria-pressed={v.interests.includes(i.id)} onClick={() => toggle("interests", i.id)}>
               {i.label}
             </button>
           ))}
         </div>
 
-        <label>제외할 관심사</label>
-        <div className="chips">
+        <label id="f-exclude">제외할 관심사</label>
+        <div className="chips" role="group" aria-labelledby="f-exclude">
           {INTERESTS.map((i) => (
             <button key={i.id} type="button" className="chip"
-              data-ex={v.exclude.includes(i.id)} onClick={() => toggle("exclude", i.id)}>
+              data-ex={v.exclude.includes(i.id)} aria-pressed={v.exclude.includes(i.id)} onClick={() => toggle("exclude", i.id)}>
               {i.label}
             </button>
           ))}

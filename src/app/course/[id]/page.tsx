@@ -8,8 +8,11 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
   const { id } = use(params);
   const [course, setCourse] = useState<Course | null>(null);
   const [missing, setMissing] = useState(false);
+  // 복구 화면에서 같은 조건으로 다시 추천받기를 주 행동으로 보일지 판단함 (FR-008 수용 기준 4)
+  const [hasInput, setHasInput] = useState(false);
 
   useEffect(() => {
+    setHasInput(!!sessionStorage.getItem("tf-input"));
     const raw = sessionStorage.getItem("tf-courses");
     if (!raw) {
       setMissing(true);
@@ -27,8 +30,10 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
       <main>
         <div role="status" aria-live="polite">
           <p className="sub">코스를 불러올 수 없어요. 링크가 오래됐거나 이 브라우저에 정보가 없어요.</p>
-          <Link className="maplink" href="/result">추천 목록으로</Link>
-          <Link className="maplink" href="/">새로 추천받기</Link>
+          {hasInput && (
+            <Link className="maplink" href="/result">같은 조건으로 다시 추천받기</Link>
+          )}
+          <Link className="maplink" href="/">조건 새로 입력하기</Link>
         </div>
       </main>
     );

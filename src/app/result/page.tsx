@@ -34,13 +34,18 @@ export default function ResultPage() {
     const input = JSON.parse(raw) as FilterInput;
     // 추천 API는 tripfilter-backend 소유임. 주소는 NEXT_PUBLIC_API_BASE_URL로 주입함.
     fetch(`${API}/api/v1/recommend`, {
+      // 응답이 오지 않으면 로딩이 끝나지 않으므로 15초에서 끊고 통신 오류로 보냄
+      signal: AbortSignal.timeout(15000),
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(input),
     })
-      .then(async (r) => ({ httpOk: r.ok, body: await r.json() }))
-      .then(({ httpOk, body }) => {
-        if (body.ok && body.courses?.length) {
+      .then(async (r) => ({ httpOk: r.ok, status: r.status, body: await r.json() }))
+      .then(({ httpOk, status, body }) => {
+        if (status >= 500) {
+          // 서버 오류를 입력 오류 문구로 보여주면 사용자를 탓하게 되므로 통신 오류로 보냄
+          setS({ status: "error", courses: [] });
+        } else if (body.ok && body.courses?.length) {
           sessionStorage.setItem("tf-courses", JSON.stringify(body.courses));
           setS({ status: "ok", courses: body.courses });
         } else if (!httpOk) {
