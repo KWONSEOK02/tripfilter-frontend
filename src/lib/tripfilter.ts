@@ -53,7 +53,9 @@ export interface Course {
   id: string;
   title: string;
   places: Place[];
-  totalCost: number; // 1인 합계
+  // 인원 전체 합계(원). 1인 기준이 아님 — 서버가 1인 비용 합에 partySize 를 곱해 내려보냄.
+  // 1인 금액이 필요하면 partySize 로 나눌 것. 계약 정본은 docs/architecture/api-contract.md.
+  totalCost: number;
   totalMin: number; // 이동 포함 소요(분)
   score: number; // 0~100
   reason: Reason;
