@@ -20,6 +20,12 @@ export default function HomePage() {
   const [v, setV] = useState<FilterInput>(DEFAULT_INPUT);
   const [areas, setAreas] = useState<Area[]>(FALLBACK_AREAS);
   const [error, setError] = useState<string | null>(null);
+  // 같은 오류로 다시 제출해도 새 노드로 넣어 보조기기가 다시 읽게 함. 문구가 같으면 DOM 이 안 바뀌어 무음이었음 (2026-09-16 NVDA 실측)
+  const [errorSeq, setErrorSeq] = useState(0);
+  const showError = (message: string) => {
+    setError(message);
+    setErrorSeq((n) => n + 1);
+  };
   // 이동이 끝나기 전 재클릭과 Enter 반복을 막음. 결과 화면이 API를 호출하므로 여기서 막지 않으면 중복 요청이 됨
   const [busy, setBusy] = useState(false);
 
@@ -78,13 +84,16 @@ export default function HomePage() {
     // disabled 속성과 별개로 핸들러에서도 재진입을 막음. 키보드 실행은 속성만으로 충분하지 않음
     if (busy) return;
     const problem = validate(v);
-    setError(problem);
-    if (problem) return;
+    if (problem) {
+      showError(problem);
+      return;
+    }
+    setError(null);
     try {
       sessionStorage.setItem("tf-input", JSON.stringify(v));
     } catch {
       // 저장소를 쓸 수 없으면 결과 화면이 조건을 읽지 못하므로 이동하지 않고 알림. busy 를 켜기 전에 처리해 버튼 고착을 막음
-      setError("이 브라우저에서는 조건을 저장할 수 없어요. 사생활 보호 모드를 끄고 다시 시도해주세요.");
+      showError("이 브라우저에서는 조건을 저장할 수 없어요. 사생활 보호 모드를 끄고 다시 시도해주세요.");
       return;
     }
     setBusy(true);
@@ -149,7 +158,7 @@ export default function HomePage() {
 
       {/* 입력 오류를 보조기기에도 알림 (D-11, WCAG 2.2 4.1.3) */}
       <div role="alert" aria-live="assertive">
-        {error && <p className="inputerror">{error}</p>}
+        {error && <p key={errorSeq} className="inputerror">{error}</p>}
       </div>
 
       <button className="primary" onClick={submit} disabled={busy} aria-busy={busy}>
