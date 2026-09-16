@@ -26,21 +26,28 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
     }
   }, [id]);
 
-  // 상태 전환을 보조기기에 알림 (D-11, WCAG 2.2 4.1.3 상태 메시지 AA)
-  if (missing) {
+  // 상태 전환을 보조기기에 알림 (D-11, WCAG 2.2 4.1.3 상태 메시지 AA).
+  // 결과 화면과 같은 규칙: 라이브 영역에는 짧은 메시지만 두고 상태마다 key 로 통째 교체함.
+  // 링크를 영역 안에 두면 문구가 제자리에서 바뀐 뒤 링크가 붙으며 NVDA 가 두 번 읽음 (2026-09-16 실측)
+  if (missing || !course) {
     return (
       <main>
         <div role="status" aria-live="polite">
-          <p className="sub">코스를 불러올 수 없어요. 링크가 오래됐거나 이 브라우저에 정보가 없어요.</p>
-          {hasInput && (
-            <Link className="maplink" href="/result">같은 조건으로 다시 추천받기</Link>
-          )}
-          <Link className="maplink" href="/">조건 새로 입력하기</Link>
+          <div key={missing ? "missing" : "loading"}>
+            <p className="sub">{missing ? "코스를 불러올 수 없어요. 링크가 오래됐거나 이 브라우저에 정보가 없어요." : "불러오는 중…"}</p>
+          </div>
         </div>
+        {missing && (
+          <>
+            {hasInput && (
+              <Link className="maplink" href="/result">같은 조건으로 다시 추천받기</Link>
+            )}
+            <Link className="maplink" href="/">조건 새로 입력하기</Link>
+          </>
+        )}
       </main>
     );
   }
-  if (!course) return <main><div role="status" aria-live="polite"><p className="sub">불러오는 중…</p></div></main>;
 
   const anyOutdoor = course.places.some((p) => !p.indoor);
 
