@@ -1,8 +1,8 @@
 name: ci
 
 # 커밋 전 검증 루프를 main push와 PR에서 자동 실행함.
-# 정본 루프는 typecheck 더하기 build (.agents/rules/verification-loop.md).
-# 하드코딩 검사(scripts/check-hardcoded.mjs)는 신설 후 이 워크플로에 추가함.
+# 정본 루프는 typecheck 더하기 check 더하기 build (.agents/rules/verification-loop.md).
+# check 는 색과 타이포 값이 globals.css 의 :root 밖에 직접 쓰였는지 보는 게이트임.
 
 on:
   push:
@@ -25,5 +25,7 @@ jobs:
         run: npm ci
       - name: Typecheck
         run: npm run typecheck
+      - name: Hardcoded token check
+        run: npm run check
       - name: Build
         run: npm run build
