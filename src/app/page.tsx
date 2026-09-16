@@ -96,6 +96,8 @@ export default function HomePage() {
             <option key={a.key} value={a.key}>{a.label}</option>
           ))}
         </select>
+        {/* ponytail: 기준점이 mock-centroid 인 동안의 고정 문구임. 법정동 기준 전환 회차에 문구도 바꿈 (UI-D1, ADR-005 Decision 4) */}
+        <p className="muted">역이나 특정 지점이 아니라 이 권역 후보 장소들의 평균 위치를 출발점으로 계산해요.</p>
 
         <div className="row">
           <div>
@@ -113,6 +115,8 @@ export default function HomePage() {
         <label>인원</label>
         <input type="number" min={1} max={10} value={v.partySize}
           onChange={(e) => setV({ ...v, partySize: Number(e.target.value) })} />
+        {/* 1인 비용과 예산 양쪽에 인원이 곱해져 순위에서 약분됨. 가중치를 넣지 않고 표시 전용임을 밝힘 (UI-A4) */}
+        <p className="muted">전체 금액 표시에만 쓰이고, 코스 순위에는 영향을 주지 않아요.</p>
 
         <label>관심사 (탭하여 선택)</label>
         <div className="chips">

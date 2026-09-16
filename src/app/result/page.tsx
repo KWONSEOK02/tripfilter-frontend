@@ -70,7 +70,7 @@ export default function ResultPage() {
   );
 
   if (s.status === "loading") {
-    return live(<p className="sub">부산 관광 후보를 비교해 Top-3 코스를 고르는 중…</p>);
+    return live(<p className="sub">부산 관광 후보를 비교해 코스를 고르는 중…</p>);
   }
 
   if (s.status === "invalid") {
@@ -122,9 +122,16 @@ export default function ResultPage() {
   return (
     <main>
       <div role="status" aria-live="polite">
-        <h1>추천 코스 Top-3</h1>
+        {/* 서버가 최대 3개를 주므로 고정 "Top-3" 대신 실제 개수를 씀 (UI-A3).
+            부족한 이유는 진단 정보가 없어 추측하지 않음 */}
+        <h1>추천 코스 {s.courses.length}개</h1>
+        {s.courses.length < 3 && <p className="muted">현재 데이터와 조건에서 {s.courses.length}개를 찾았어요.</p>}
         <p className="sub">근거 카드를 확인하고, 마음에 드는 코스의 지도앱으로 이동하세요.</p>
       </div>
+      {/* ponytail: 실연동 전까지 고정 고지임. fetchPlaces 가 TourAPI 로 바뀌는 회차에 제거함 (UI-A2) */}
+      <p className="muted">표시 데이터는 시연용 예시예요. 장소 정보, 비용, 평점은 실제와 다를 수 있어요.</p>
+      {/* 이동 시간의 출발점은 권역 후보 평균 좌표임. 대표 역처럼 읽히지 않게 밝힘 (UI-D1, ADR-005 Decision 4) */}
+      <p className="muted">이동 시간은 출발 권역 후보 장소들의 평균 위치에서 계산했어요. 숙소에서 그곳까지 오는 시간은 빠져 있어요.</p>
       {s.courses.map((c, i) => (
         <Link key={c.id} href={`/course/${encodeURIComponent(c.id)}`} className="card plain">
           <div className="rowbetween">
