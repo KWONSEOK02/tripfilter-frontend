@@ -54,7 +54,7 @@
   --lh-28: 28px; /* 22 제목 */
   --lh-24: 24px; /* 16 입력, 버튼 */
   --lh-20: 20px; /* 14 본문, 13 보조 */
-  --lh-16: 16px; /* 12 배지, 푸터 */
+  --lh-16: 16px; /* 12 푸터 */
   --fw-regular: 400;
   --fw-semibold: 600;
   --fw-bold: 700;
@@ -150,10 +150,6 @@ a.card { display: block; }
 /* 제목이 길어도 점수는 쪼개지지 않게 함 */
 .score { font-weight: var(--fw-bold); color: var(--c-accent); flex: 0 0 auto; white-space: nowrap; }
 .reason { font-size: var(--fs-13); line-height: var(--lh-20); color: var(--c-ink-muted); margin: var(--space-4) 0; }
-.badge { display: inline-block; font-size: var(--fs-12); line-height: var(--lh-16); padding: var(--space-4) var(--space-8); border-radius: var(--radius-full); margin-right: var(--space-8); }
-.badge.verified { background: var(--c-tint-success); color: var(--c-success); }
-.badge.info { background: var(--c-tint-warning); color: var(--c-warning); }
-.badge.caution { background: var(--c-tint-danger); color: var(--c-danger); }
 .place { padding: var(--space-8) 0; border-top: 1px solid var(--c-border); }
 .place:first-child { border-top: 0; }
 .muted { color: var(--c-ink-muted); font-size: var(--fs-13); line-height: var(--lh-20); }

@@ -38,8 +38,9 @@ export interface Place {
   indoor: boolean;
   rating: number; // 외부 평판 0~5
   reviewCount: number;
-  safetyBadge: "verified" | "info" | "caution"; // 안전·검증 신호
-  source: "TourAPI" | "TourAPI+Kakao"; // 데이터 출처(신뢰도)
+  // legacy: 수동 태깅값이라 표시와 점수에 쓰지 않음(ADR-008). v1 호환을 위해 필드만 유지함
+  safetyBadge: "verified" | "info" | "caution";
+  source: "TourAPI" | "TourAPI+Kakao"; // mock 수동값. 점수에 쓰지 않음(ADR-008)
 }
 
 // 추천 근거 카드 3줄(제안서 5단계).

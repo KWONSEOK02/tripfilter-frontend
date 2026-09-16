@@ -142,7 +142,7 @@ export default function ResultPage() {
           </div>
           <p className="reason">예산 · {c.reason.budget}</p>
           <p className="reason">시간 · {c.reason.time}</p>
-          <p className="reason">안전 · {c.reason.safety}</p>
+          <p className="reason">데이터 안내 · {c.reason.safety}</p>
         </Link>
       ))}
       <Link className="maplink" href="/">

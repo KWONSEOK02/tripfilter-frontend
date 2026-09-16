@@ -4,8 +4,6 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { mapLinks, type Course } from "@/lib/tripfilter";
 
-const BADGE_LABEL = { verified: "검증됨", info: "정보", caution: "주의" } as const;
-
 export default function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [course, setCourse] = useState<Course | null>(null);
@@ -48,7 +46,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
       <div className="card">
         <p className="reason">예산 · {course.reason.budget}</p>
         <p className="reason">시간 · {course.reason.time}</p>
-        <p className="reason">안전 · {course.reason.safety}</p>
+        <p className="reason">데이터 안내 · {course.reason.safety}</p>
       </div>
 
       <div className="card">
@@ -56,10 +54,8 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
           const m = mapLinks(p);
           return (
             <div key={p.contentId} className="place">
-              <div className="rowbetween">
-                <strong>{p.title}</strong>
-                <span className={`badge ${p.safetyBadge}`}>{BADGE_LABEL[p.safetyBadge]}</span>
-              </div>
+              {/* 증빙 없는 수동 배지는 표시하지 않음 (ADR-008) */}
+              <strong>{p.title}</strong>
               <p className="muted">{p.addr} · {p.indoor ? "실내" : "실외"} · 체류 약 {p.dwellMin}분 · {p.avgCost === 0 ? "무료" : `${p.avgCost.toLocaleString()}원`}</p>
               <a className="maplink" href={m.kakao} target="_blank" rel="noreferrer">카카오맵</a>
               <a className="maplink" href={m.naver} target="_blank" rel="noreferrer">네이버지도</a>

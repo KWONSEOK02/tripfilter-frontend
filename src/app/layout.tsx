@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "부산 트립필터 — TripFilter",
-  description: "예산·시간·관심사·안전 신호로 부산 여행 코스를 걸러주는 서비스",
+  description: "예산·시간·관심사로 부산 여행 코스를 걸러주는 서비스",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
