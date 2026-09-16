@@ -1,0 +1,29 @@
+name: ci
+
+# 커밋 전 검증 루프를 main push와 PR에서 자동 실행함.
+# 정본 루프는 typecheck 더하기 build (.agents/rules/verification-loop.md).
+# 하드코딩 검사(scripts/check-hardcoded.mjs)는 신설 후 이 워크플로에 추가함.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: typecheck + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
