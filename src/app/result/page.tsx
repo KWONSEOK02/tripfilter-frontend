@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Course, FilterInput } from "@/lib/tripfilter";
@@ -19,13 +19,17 @@ const INVALID_MESSAGE: Record<string, string> = {
 export default function ResultPage() {
   const router = useRouter();
   const [s, setS] = useState<State>({ status: "loading", courses: [] });
+  // 요청이 떠 있는 동안 재호출을 막음. 상태 갱신은 비동기라 status 로만 판정하면 연속 클릭이 통과함
+  const inFlight = useRef(false);
 
   const load = useCallback(() => {
+    if (inFlight.current) return;
     const raw = sessionStorage.getItem("tf-input");
     if (!raw) {
       router.replace("/");
       return;
     }
+    inFlight.current = true;
     setS({ status: "loading", courses: [] });
     const input = JSON.parse(raw) as FilterInput;
     // 추천 API는 tripfilter-backend 소유임. 주소는 NEXT_PUBLIC_API_BASE_URL로 주입함.
@@ -46,7 +50,10 @@ export default function ResultPage() {
           setS({ status: "empty", courses: [] });
         }
       })
-      .catch(() => setS({ status: "error", courses: [] }));
+      .catch(() => setS({ status: "error", courses: [] }))
+      .finally(() => {
+        inFlight.current = false;
+      });
   }, [router]);
 
   useEffect(() => {
@@ -99,7 +106,9 @@ export default function ResultPage() {
     return live(
       <>
         <p className="sub">추천을 불러오지 못했어요. 네트워크나 서버 상태를 확인해주세요.</p>
-        {/* 조건은 그대로 두고 같은 요청을 다시 보냄 (D-6) */}
+        {/* 조건은 그대로 두고 같은 요청을 다시 보냄 (D-6).
+            이 분기는 status 가 error 일 때만 렌더되므로 버튼에 disabled 를 걸 조건이 없고,
+            연속 클릭은 load 의 inFlight 가드가 막음 */}
         <button className="primary" onClick={load}>
           다시 시도
         </button>

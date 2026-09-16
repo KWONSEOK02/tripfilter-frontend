@@ -20,6 +20,8 @@ export default function HomePage() {
   const [v, setV] = useState<FilterInput>(DEFAULT_INPUT);
   const [areas, setAreas] = useState<Area[]>(FALLBACK_AREAS);
   const [error, setError] = useState<string | null>(null);
+  // 이동이 끝나기 전 재클릭과 Enter 반복을 막음. 결과 화면이 API를 호출하므로 여기서 막지 않으면 중복 요청이 됨
+  const [busy, setBusy] = useState(false);
 
   // 권역 목록을 서버에서 받아 화면 하드코딩을 대체함 (D-10). 실패해도 추천은 계속 가능함.
   useEffect(() => {
@@ -72,9 +74,12 @@ export default function HomePage() {
   }
 
   function submit() {
+    // disabled 속성과 별개로 핸들러에서도 재진입을 막음. 키보드 실행은 속성만으로 충분하지 않음
+    if (busy) return;
     const problem = validate(v);
     setError(problem);
     if (problem) return;
+    setBusy(true);
     sessionStorage.setItem("tf-input", JSON.stringify(v));
     router.push("/result");
   }
@@ -135,7 +140,9 @@ export default function HomePage() {
         {error && <p className="inputerror">{error}</p>}
       </div>
 
-      <button className="primary" onClick={submit}>코스 추천 받기</button>
+      <button className="primary" onClick={submit} disabled={busy} aria-busy={busy}>
+        {busy ? "코스 고르는 중" : "코스 추천 받기"}
+      </button>
     </main>
   );
 }
